@@ -9,11 +9,11 @@ load_dotenv()
 app = Flask(__name__)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
-spotify = Spotify(os.getenv('CLIENT_ID'), os.getenv('CLIENT_SECRET'), os.getenv('REDIRECT_URI'))
+spotify = Spotify(os.getenv('CLIENT_ID'), os.getenv('CLIENT_SECRET'))
 
 @app.route('/login')
 def login():
-    login_url = spotify.login()
+    login_url = spotify.login(request.url_root + 'callback')
     return redirect(login_url)
 
 @app.route('/callback')
@@ -22,7 +22,7 @@ def callback():
         return 'Fehler beim Anmelden'
 
     code = request.args.get('code')
-    tokens = spotify.callback(code)
+    tokens = spotify.callback(code, request.url_root + 'callback')
 
     if tokens[0] is None:
         return "Fehler beim Token Austausch"

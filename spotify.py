@@ -2,17 +2,16 @@ import urllib.parse
 import requests
 
 class Spotify():
-    def __init__(self, client_id, client_secret, redirect_uri):
+    def __init__(self, client_id, client_secret):
         self._client_id = client_id
         self.__client_secret = client_secret
-        self._redirect_uri = redirect_uri
 
-    def login(self):
+    def login(self, redirect_uri):
         auth_url = 'https://accounts.spotify.com/authorize'
         params = {
             'client_id': self._client_id,
             'response_type': 'code',
-            'redirect_uri': self._redirect_uri,
+            'redirect_uri': redirect_uri,
             'scope': 'user-read-currently-playing',
             'show_dialog': True
         }
@@ -20,12 +19,12 @@ class Spotify():
         url_args = urllib.parse.urlencode(params)
         return f'{auth_url}?{url_args}'
 
-    def callback(self, code):
+    def callback(self, code, redirect_uri):
         token_url = 'https://accounts.spotify.com/api/token'
         token_data = {
             'grant_type': 'authorization_code',
             'code': code,
-            'redirect_uri': self._redirect_uri,
+            'redirect_uri': redirect_uri,
             'client_id': self._client_id,
             'client_secret': self.__client_secret
         }
