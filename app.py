@@ -4,9 +4,13 @@ from flask import Flask, render_template, session, redirect, request, url_for
 from datetime import date
 import random
 from spotify import Spotify
+from werkzeug.middleware.proxy_fix import ProxyFix
 
 load_dotenv()
 app = Flask(__name__)
+app.wsgi_app = ProxyFix(
+    app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1
+)
 app.secret_key = os.getenv('FLASK_SECRET_KEY')
 
 spotify = Spotify(os.getenv('CLIENT_ID'), os.getenv('CLIENT_SECRET'))
