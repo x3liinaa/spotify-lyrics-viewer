@@ -17,7 +17,7 @@ spotify = Spotify(os.getenv('CLIENT_ID'), os.getenv('CLIENT_SECRET'))
 
 @app.route('/login')
 def login():
-    login_url = spotify.login(request.url_root + 'callback')
+    login_url = spotify.login(f'https://{request.host}/callback')
     return redirect(login_url)
 
 @app.route('/callback')
@@ -26,7 +26,7 @@ def callback():
         return 'Fehler beim Anmelden'
 
     code = request.args.get('code')
-    tokens = spotify.callback(code, request.url_root + 'callback')
+    tokens = spotify.callback(code, f'https://{request.host}/callback')
 
     if tokens[0] is None:
         return "Fehler beim Token Austausch"
